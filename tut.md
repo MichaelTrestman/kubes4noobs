@@ -4,9 +4,9 @@
 
 ## Learning Objectives:
 
-- understand what kubernetes is for 
-- set up the tools on your machine and in the cloud Google's kubernetes engine
-- create your first kubernetes cluster and deploy a sample app
+- understand what kubernetes is for.
+- set up the tools for using kubernetes, on your machine and in Google cloud.
+- create your first kubernetes cluster and deploy a sample app.
 
 
 
@@ -32,7 +32,7 @@ concepts:
 
 
 
-#### Set up your google cloud
+### Set up your google cloud
 
 1. Create a google cloud account for yourself, if you do not already have one, at https://cloud.google.com. Google offers a free trial account with plenty of credits.
 2. Create a project in google cloud at https://console.cloud.google.com/projectcreate. Record the project name or keep the browser window open so you can find it easily.
@@ -44,7 +44,7 @@ concepts:
 
 
 
-#### Set up kubectl 
+### Set up kubectl 
 
 Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, the easiest way to manage kubectl is using homebrew.
 
@@ -65,7 +65,7 @@ Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, t
 
    `$> gcloud container clusters create YOUR_CLUSTER_NAME`
 
-The output should confirm that your cluster is up and running (this output below is for creation of a 		cluster called 'noobcluster' in a google cloud project called kubes4noobs). This can take a few minutes.
+	he output should confirm that your cluster is up and running (this output below is for creation of a 		cluster called 'noobcluster' in a google cloud project called kubes4noobs). This can take a few minutes.
 
 ```
 Creating cluster noobcluster in us-west1-a... Cluster is being health-checked (master is
@@ -160,7 +160,7 @@ If you run  `kubectl describe deployments hello` again, you should see that ther
 Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
 ```
 
-You can also see that the `Events` section will show when your app scaled to 7 instances as originally deployed, and then scaled down to three after you redeployed with the edited manifest:
+You can also see that the `Events` section will show when your app scaled to seven instances as originally deployed, and then scaled down to three after you redeployed with the edited manifest:
 
 ```
 :> kubectl describe deployments hello | grep -A4 Events
