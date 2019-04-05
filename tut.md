@@ -32,27 +32,26 @@ concepts:
 
 
 
-#### Set up your gcloud shit
+#### Set up your google cloud
 
-make a gcloud account
-
-create a project in gcloud
-
-
-
-install gcloud cli tool https://cloud.google.com/sdk/docs/downloads-interactive
-
-switch to the project by typing `gcloud config set project boondoggle1point0`
+1. Create a google cloud account for yourself, if you do not already have one, at https://cloud.google.com. Google offers a free trial account with plenty of credits.
+2. Create a project in google cloud at https://console.cloud.google.com/projectcreate. Record the project name or keep the browser window open so you can find it easily.
+3. Enable Kubernetes Engine API. Find it by searching at https://console.cloud.google.com/apis/ and then clicking 'enable'.
+4. Install 'gcloud', the google cloud command line interface (CLI) tool https://cloud.google.com/sdk/docs/downloads-interactive.
+5. Open iterm (on a mac) or your terminal of choice, and type `gcloud version` to ensure that gcloud is correctly installed
+6. Configure the gcloud CLI to point to your new project by running   `gcloud config set project YOUR_PROJECT_NAME`
+7. You can always check which project gcloud is targetting by running `gcloud config get-value project`, which should return the name of your project.
 
 
 
-#### Set up your kubectl shit
+#### Set up kubectl 
 
-run `kubectl` to see if you have kubectl installed. if not, run 
+Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, the easiest way to manage kubectl is using homebrew.
 
-make sure `brew update && brew upgrade kubernetes-cli`
-
-enable Kubernetes Engine API https://console.cloud.google.com/apis/
+1. Run `brew update` to make sure your local homebrew is up to date and knows about the latest version of kubectl.
+2. Run `kubectl` to see if you have kubectl installed. 
+   - If it is installed, you should see a summary of the manual page, including a list of top level commands. In this case, run `brew upgrade kubectl` to have homebrew bring your kubectl up to date.
+   - If kubectl is not installed, your shell will tell you that the kubectl command cannot be found. In this case, run `brew install kubectl`. Now running the `kubectl` command should give you a summary of the manual page.
 
 
 
@@ -60,28 +59,28 @@ enable Kubernetes Engine API https://console.cloud.google.com/apis/
 
 
 
-Create a cluster in your google cloud by running:
+1. If you prefer to create your cluster in a specific zone, you can target the zone by running `gcloud config set compute/zone PREFERRED_ZONE`, for example, you could use 'us-west1-a' as the value of `PREFERRED_ZONE`.
 
-`$> gcloud container clusters create clusterfux`
+2. Create a cluster in your google cloud by running:
 
+   `$> gcloud container clusters create YOUR_CLUSTER_NAME`
 
-
-The output should confirm that your cluster is up and running. This can take a few minutes.
+The output should confirm that your cluster is up and running (this output below is for creation of a 		cluster called 'noobcluster' in a google cloud project called kubes4noobs). This can take a few minutes.
 
 ```
-Creating cluster clusterfux in us-west1-a... Cluster is being health-checked (master is
+Creating cluster noobcluster in us-west1-a... Cluster is being health-checked (master is
 
  healthy)...done.
 
-Created [https://container.googleapis.com/v1/projects/boondoggle1point0/zones/us-west1-a/clusters/clusterfux].
+Created [https://container.googleapis.com/v1/projects/kubes4noobs/zones/us-west1-a/clusters/noobcluster].
 
-To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-west1-a/clusterfux?project=boondoggle1point0
+To inspect the contents of your cluster, go to: https://console.cloud.google.com/kubernetes/workload_/gcloud/us-west1-a/noobcluster?project=kubes4noobs
 
-kubeconfig entry generated for clusterfux.
+kubeconfig entry generated for noobcluster.
 
 NAME        LOCATION    MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
 
-clusterfux  us-west1-a  1.11.7-gke.12   35.197.16.123  n1-standard-1  1.11.7-gke.12  3          RUNNING
+noobcluster  us-west1-a  1.11.7-gke.12   35.197.16.123  n1-standard-1  1.11.7-gke.12  3          RUNNING
 
 ```
 
@@ -95,7 +94,7 @@ Now we will deploy a simple app with a load balancer in front of a microservice 
 
 
 
-We'll do this by running the `kubectl create deployment` command, pointing to a manifest that describes the service we want to deploy. The manifest will look like this:
+We'll do this by running the `kubectl create deployment` command, pointing to a manifest that describes the a Kubernetes pod containing the app we want to deploy. The manifest will look like this:
 
 ```yaml
 apiVersion: apps/v1
@@ -175,8 +174,4 @@ Events:
 
 
 Currently, our application is not exposed to the internet. Do this, we will have Kuberneteds create a load balancer with a public IP address to which we can make requests via a web browser or the `curl` command.
-
-
-
-
 
