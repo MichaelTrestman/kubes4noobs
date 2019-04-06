@@ -2,15 +2,44 @@
 
 
 
-## Learning Objectives:
+This tutorial offers a conceptual overview of Kubernetes, will guide the user through a hands-on, beginner-level exercise in creating a compute cluster and deploying a simple web application.
+
+### Pre-requisites:
+
+- The tutorial will assume the user has a mac computer
+- Access to the internet
+- A credit card in order to set up a free trial with Google cloud (the credit card is used to establish identity but will not be charged)
+
+### Learning Objectives:
 
 - understand what kubernetes is for.
 - set up the tools for using kubernetes, on your machine and in Google cloud.
-- create your first kubernetes cluster and deploy a sample app.
+- create your first kubernetes cluster
+- deploy a sample app and load balancer
+- route traffic through the load balancer to the application using a Kubernetes service.
+
+### Outline:
+
+1. What is Kubernetes? A conceptual introduction
+
+2. Getting a Handle on Kubernetes: setting up our tools
+
+   1. Set up your Google cloud
+   2. Set up kubectl
+
+3. Cloud Operations with Kubernetes
+
+   1. Create a cluster in the cloud
+
+   2. Deploy a sample app
+
+   3. Route traffic to the application
+
+      
 
 
 
-## What is Kubernetes?
+## What is Kubernetes? A conceptual introduction
 
 
 
@@ -25,19 +54,23 @@ concepts:
 
 Kubernetes is a tool for orchestrating distributed computing application. In recent years it has been widely adopted due to its ease of use and its power as a force multiplier in operations, allowing a small number of engineers to deploy, reliably maintain, and upgrade distributed computing systems. Of particular note are a) the ease and precision it brings to horizontal scaling—increasing the number of instances of components of a distributed system, and b) the inherent self-healing nature of systems deployed with Kubernetes, particularly in cloud-based computing environments.
 
-In large part the power of Kubernetes to ease operations work lies in the philosophy of *declarative configuration* which it embodies. Essentially this means that you command Kubernetes to bring about a particular state of your computing system by describing or “declaring” the desired end state, rather than issuing a series of commands to perform specific operations—what is known as *imperative configuration*, by contrast. Consider an analogy with helping your friend navigate to a cafe to meet you for lunch. An *imperative* way to “configure” their location to the coordinates of the cafe would be issue a set of steps, like “walk to the corner of Blah street and turn left”, “continue down Whatever Avenue for 2 miles”, or “take the next right after the little red school house”. A *declarative* approach would allow you to simply give them the address or the GPS coordinates of the cafe, and use an automated system capable of continuously updating their position, from wherever they currently are, until they arrive at the destination.
+In large part the power of Kubernetes to ease operations work lies in the philosophy of *declarative configuration* which it embodies. Essentially this means that you command Kubernetes to bring about a particular state of your computing system by describing or “declaring” the desired end state, rather than by issuing a sequence of commands to perform specific operations—what is known as *imperative configuration*, by contrast. Consider an analogy with helping your friend navigate to a cafe to meet you for lunch. An *imperative* way to “configure” their location to the coordinates of the cafe would be issue a set of steps, like “walk to the corner of Blah street and turn left”, “continue down Whatever Avenue for 2 miles”, or “take the next right after the little red school house”. A *declarative* approach would allow you to simply *declare* the address or GPS coordinates of the cafe, and have them use an automated system capable of continuously updating their position, from wherever they currently are, until they arrive at the destination.
 
-The declarative approach has obvious advantages: the imperative approach is extremely fragile--it depends on knowing the person's precise location at the start, and it includes no provisions for any unexpected surprises that might cause your friend to have to alter their route—unless they are a capable navigator already familiar with the area, they will be completely lost if everything doesn't go according to plan. Even a missing street sign could cause them to end up on the other side of town.
+The declarative approach has obvious advantages: the imperative is extremely fragile by comparison--it  depends on knowing the person's precise location at the start, and it includes no provisions for any unexpected surprises that might cause your friend to have to alter their route—unless they are a capable navigator already familiar with the area, they will be completely lost if everything doesn't go according to plan. Even a missing street sign could cause them to end up on the other side of town.
 
 As obvious as the advantages of the declarative approach is the fact that it requires sophisticated technology—in this case a gps navigation system. But, given that one does have access to such a system, the advantages are great indeed. Kubernetes offers comparable advantages in the domain of distributed computing systems operations. Rather than having to follow a series of specific procedural steps such as “download the binary from <https://whatever.url”>, “copy the file into /some/specific/directory”, etc., one simply provides Kubernetes with a manifest, a human-readable description of the desired end state of the system, and allows the powerful technology it encapsulates to guide the system to the correct state.    Similar to an automated gps navigator, Kubernetes can bring your system to a desired state from any starting position, and can correct course along the way if things go wrong.
 
-Other important advantages lack clear analogues in the navigation case. Kubernetes can “self-heal”, if some of the containerized components fail. If your manifest says there should be 147 widgets running, and someone in a data center unplugs the machine running 20 of the widgets, Kubernetes will detect this disparity and bring the system back to the state described in the manifest by allocating 20 widgets to other available machines.
+Other important advantages lack clear analogues in the navigation case. Kubernetes can “self-heal”, if some of the containerized components fail. If your manifest says there should be 147 widgets running, and someone in a data center accidentally unplugs the machine running 20 of the widgets, Kubernetes will quickly detect this disparity and bring the system back to the state described in the manifest by allocating 20 widgets to other available machines.
 
-Kubernetes also makes scaling more easily efficient by introducing the notion of *pods,* which are collections of containers that must be collocated in a single computing environment, for example if they need to share a file system or the ability to use inter-process messaging    
+Kubernetes also makes scaling more easily efficient by introducing the notion of *pods,* which are collections of containers that must be collocated in a single computing environment, for example if they need to share a file system or the ability to use inter-process messaging.
 
 
 
-## Getting a Handle on Kubernetes
+## Getting a Handle on Kubernetes: setting up our tools
+
+
+
+In this section we will prepare the infrastructure and tools to use Kubernetes. We will use Google cloud, the hosted cloud computing environment offered by Google. It is an easy way to start, although it is also powerful enough to handle enterprise scale industrial computing applications.
 
 
 
@@ -64,7 +97,11 @@ Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, t
 
 
 
-## Create a cluster in the cloud
+
+
+## Cloud Operations with Kubernetes
+
+### Part 1: Create a cluster in the cloud
 
 
 
@@ -95,7 +132,7 @@ noobcluster  us-west1-a  1.11.7-gke.12   35.197.16.123  n1-standard-1  1.11.7-gk
 
 
 
-## Deploy a sample app
+### Part 2: Deploy a sample app
 
 
 
@@ -177,6 +214,10 @@ Events:
   Normal  ScalingReplicaSet  14m    deployment-controller  Scaled up replica set hello-7d7d777c6b to 7
   Normal  ScalingReplicaSet  4m36s  deployment-controller  Scaled down replica set hello-7d7d777c6b to 3
 ```
+
+
+
+### Part 3: Route traffic to the application
 
 
 
