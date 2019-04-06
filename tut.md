@@ -14,17 +14,26 @@
 
 
 
-Kubernetes is a tool for orchestrating distributed computing application.
-
 concepts:
 
 - declarative configuration
-  - understandibility
-  - reproducibility
-- containers
 - pods
 - self-healing
 - scaling
+
+
+
+Kubernetes is a tool for orchestrating distributed computing application. In recent years it has been widely adopted due to its ease of use and its power as a force multiplier in operations, allowing a small number of engineers to deploy, reliably maintain, and upgrade distributed computing systems. Of particular note are a) the ease and precision it brings to horizontal scaling—increasing the number of instances of components of a distributed system, and b) the inherent self-healing nature of systems deployed with Kubernetes, particularly in cloud-based computing environments.
+
+In large part the power of Kubernetes to ease operations work lies in the philosophy of *declarative configuration* which it embodies. Essentially this means that you command Kubernetes to bring about a particular state of your computing system by describing or “declaring” the desired end state, rather than issuing a series of commands to perform specific operations—what is known as *imperative configuration*, by contrast. Consider an analogy with helping your friend navigate to a cafe to meet you for lunch. An *imperative* way to “configure” their location to the coordinates of the cafe would be issue a set of steps, like “walk to the corner of Blah street and turn left”, “continue down Whatever Avenue for 2 miles”, or “take the next right after the little red school house”. A *declarative* approach would allow you to simply give them the address or the GPS coordinates of the cafe, and use an automated system capable of continuously updating their position, from wherever they currently are, until they arrive at the destination.
+
+The declarative approach has obvious advantages: the imperative approach is extremely fragile--it depends on knowing the person's precise location at the start, and it includes no provisions for any unexpected surprises that might cause your friend to have to alter their route—unless they are a capable navigator already familiar with the area, they will be completely lost if everything doesn't go according to plan. Even a missing street sign could cause them to end up on the other side of town.
+
+As obvious as the advantages of the declarative approach is the fact that it requires sophisticated technology—in this case a gps navigation system. But, given that one does have access to such a system, the advantages are great indeed. Kubernetes offers comparable advantages in the domain of distributed computing systems operations. Rather than having to follow a series of specific procedural steps such as “download the binary from <https://whatever.url”>, “copy the file into /some/specific/directory”, etc., one simply provides Kubernetes with a manifest, a human-readable description of the desired end state of the system, and allows the powerful technology it encapsulates to guide the system to the correct state.    Similar to an automated gps navigator, Kubernetes can bring your system to a desired state from any starting position, and can correct course along the way if things go wrong.
+
+Other important advantages lack clear analogues in the navigation case. Kubernetes can “self-heal”, if some of the containerized components fail. If your manifest says there should be 147 widgets running, and someone in a data center unplugs the machine running 20 of the widgets, Kubernetes will detect this disparity and bring the system back to the state described in the manifest by allocating 20 widgets to other available machines.
+
+Kubernetes also makes scaling more easily efficient by introducing the notion of *pods,* which are collections of containers that must be collocated in a single computing environment, for example if they need to share a file system or the ability to use inter-process messaging    
 
 
 
@@ -32,12 +41,12 @@ concepts:
 
 
 
-### Set up your google cloud
+### Set up your Google cloud
 
-1. Create a google cloud account for yourself, if you do not already have one, at https://cloud.google.com. Google offers a free trial account with plenty of credits.
-2. Create a project in google cloud at https://console.cloud.google.com/projectcreate. Record the project name or keep the browser window open so you can find it easily.
+1. Create a Google cloud account for yourself, if you do not already have one, at https://cloud.google.com. Google offers a free trial account with plenty of credits.
+2. Create a project in Google cloud at https://console.cloud.google.com/projectcreate. Record the project name or keep the browser window open so you can find it easily.
 3. Enable Kubernetes Engine API. Find it by searching at https://console.cloud.google.com/apis/ and then clicking 'enable'.
-4. Install 'gcloud', the google cloud command line interface (CLI) tool https://cloud.google.com/sdk/docs/downloads-interactive.
+4. Install 'gcloud', the Google cloud command line interface (CLI) tool https://cloud.google.com/sdk/docs/downloads-interactive.
 5. Open iterm (on a mac) or your terminal of choice, and type `gcloud version` to ensure that gcloud is correctly installed
 6. Configure the gcloud CLI to point to your new project by running   `gcloud config set project YOUR_PROJECT_NAME`
 7. You can always check which project gcloud is targetting by running `gcloud config get-value project`, which should return the name of your project.
@@ -59,13 +68,13 @@ Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, t
 
 
 
-1. If you prefer to create your cluster in a specific zone, you can target the zone by running `gcloud config set compute/zone PREFERRED_ZONE`, for example, you could use 'us-west1-a' as the value of `PREFERRED_ZONE`.
+1. (Optional) If you prefer to create your cluster in a specific zone, you can target the zone by running `gcloud config set compute/zone PREFERRED_ZONE`, for example, you could use 'us-west1-a' as the value of `PREFERRED_ZONE`.
 
-2. Create a cluster in your google cloud by running:
+2. Create a cluster in your Google cloud by running:
 
    `$> gcloud container clusters create YOUR_CLUSTER_NAME`
 
-	he output should confirm that your cluster is up and running (this output below is for creation of a 		cluster called 'noobcluster' in a google cloud project called kubes4noobs). This can take a few minutes.
+	The output should confirm that your cluster is up and running (the output below is for creation of a 		cluster called 'noobcluster' in a Google cloud project called 'kubes4noobs'). This can take a few minutes.
 
 ```
 Creating cluster noobcluster in us-west1-a... Cluster is being health-checked (master is
@@ -92,9 +101,7 @@ noobcluster  us-west1-a  1.11.7-gke.12   35.197.16.123  n1-standard-1  1.11.7-gk
 
 Now we will deploy a simple app with a load balancer in front of a microservice that responds to requests by saying "hello".
 
-
-
-We'll do this by running the `kubectl create deployment` command, pointing to a manifest that describes the a Kubernetes pod containing the app we want to deploy. The manifest will look like this:
+We'll do this by running the `kubectl apply` command, pointing to a manifest that describes a deployment with the pod containing our app. The manifest will look like this:
 
 ```yaml
 apiVersion: apps/v1
@@ -137,7 +144,7 @@ You should see confirmation that the deployment has been created `deployment.app
 
 If you ask Kubernetes to list your deployments, you should see it listed:
 
-```
+```bash
 :> kubectl get deployments
 NAME    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 hello   7         7         7            7           1m
@@ -149,20 +156,20 @@ You can get detailed information about the deployment asking Kubernetes to descr
 
  `kubectl describe deployments hello`
 
-The manifest we used to create the deployment asks for 7 replicas of the pod containing our application. This is more than we need for this simple example, so let's scale it back by editing the manifest.
+The manifest we used to create the deployment asks for seven replicas of the pod containing our application. This is more than we need for this simple example, so let's scale it back by editing the manifest.
 
 Run `kubectl edit deployments hello` to edit the manifest in your default text editor. Under the `spec` key, edit the value of the `replicas` key to be 3, rather than seven. Save and close the file, and Kubernetes will apply your changes.
 
 If you run  `kubectl describe deployments hello` again, you should see that there are now only 3 replicas. 
 
-```
+```bash
 :> kubectl describe deployments hello | grep Replicas:
 Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
 ```
 
-You can also see that the `Events` section will show when your app scaled to seven instances as originally deployed, and then scaled down to three after you redeployed with the edited manifest:
+You can also see that the `Events` section will show when the pod containing your app scaled to seven replicas as originally deployed, and then scaled down to three after you redeployed with the edited manifest:
 
-```
+```bash
 :> kubectl describe deployments hello | grep -A4 Events
 Events:
   Type    Reason             Age    From                   Message
@@ -173,5 +180,26 @@ Events:
 
 
 
-Currently, our application is not exposed to the internet. Do this, we will have Kuberneteds create a load balancer with a public IP address to which we can make requests via a web browser or the `curl` command.
+Currently, the application is not exposed to the internet. Do this, we will have Kuberneteds create a load balancer with a public IP address to which we can make requests via a web browser or the `curl` command. However, first, we need to define a Kubernetes 'service' object to make our app backend routable to the load balancer. We will do this by applying the following manifest:d
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: hello
+spec:
+  selector:
+    app: hello
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: http
+```
+
+Note that the manifest uses the 'app: hello' and 'tier: backend' selectors that we defined in the manifest we used to deploy the app, in order to locate the app.
+
+As before we will command Kubernetes to make the desired changes using `kubernetes apply -f PATH_TO_MANIFEST`. Either a) copy the manifest above into a file on your local file system, and use the path to the manifest on your local file system, or b) use the following path where it is hosted by k8s.io as an example: https://k8s.io/examples/service/access/hello-service.yaml.
+
+
 
