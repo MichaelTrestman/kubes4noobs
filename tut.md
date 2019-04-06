@@ -6,21 +6,21 @@ This tutorial offers a conceptual overview of Kubernetes, will guide the user th
 
 ### Pre-requisites:
 
-- The tutorial will assume the user has a mac computer
-- Access to the internet
-- A credit card in order to set up a free trial with Google cloud (the credit card is used to establish identity but will not be charged)
+- The tutorial will assume the user has a mac computer.
+- Access to the internet.
+- A credit card in order to set up a free trial with Google cloud (the credit card is used to establish identity but will not be charged).
 
 ### Learning Objectives:
 
-- understand what kubernetes is for.
-- set up the tools for using kubernetes, on your machine and in Google cloud.
-- create your first kubernetes cluster
-- deploy a sample app and load balancer
-- route traffic through the load balancer to the application using a Kubernetes service.
+- Understand the advantages of using Kubernetes to manage distributed computing systems.
+- Set up the tools for using kubernetes, on your machine and in Google cloud.
+- Create your first kubernetes cluster.
+- Deploy a sample app and load balancer.
+- Route traffic through the load balancer to the application using a Kubernetes service.
 
 ### Outline:
 
-1. What is Kubernetes? A conceptual introduction
+1. The Kubernetes philosophy: a conceptual introduction
 2. Getting a Handle on Kubernetes: setting up our tools
    1. Set up your Google cloud
    2. Set up kubectl
@@ -33,7 +33,7 @@ This tutorial offers a conceptual overview of Kubernetes, will guide the user th
 
 
 
-## The Kubernetes philosophy: A conceptual introduction
+## The Kubernetes philosophy: a conceptual introduction
 
 
 
