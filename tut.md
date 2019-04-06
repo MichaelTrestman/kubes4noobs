@@ -43,14 +43,15 @@ This tutorial offers a conceptual overview of Kubernetes, will guide the user th
 
 
 
-concepts:
+### Key concepts:
 
 - declarative configuration
-- pods
+
 - self-healing
-- scaling
 
+- scaling with pods
 
+  
 
 Kubernetes is a tool for orchestrating distributed computing application. In recent years it has been widely adopted due to its ease of use and its power as a force multiplier in operations, allowing a small number of engineers to deploy, reliably maintain, and upgrade distributed computing systems. Of particular note are a) the ease and precision it brings to horizontal scaling—increasing the number of instances of components of a distributed system, and b) the inherent self-healing nature of systems deployed with Kubernetes, particularly in cloud-based computing environments.
 
