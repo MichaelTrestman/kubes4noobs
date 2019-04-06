@@ -2,7 +2,7 @@
 
 
 
-This tutorial offers a conceptual overview of Kubernetes, will guide the user through a hands-on, beginner-level exercise in creating a compute cluster and deploying a simple web application.
+This tutorial offers a conceptual overview of Kubernetes, and then guides the user through a hands-on, beginner-level exercise in creating a compute cluster and deploying a simple web application.
 
 ### Pre-requisites:
 
