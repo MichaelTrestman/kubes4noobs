@@ -21,49 +21,31 @@ This tutorial offers a conceptual overview of Kubernetes, will guide the user th
 ### Outline:
 
 1. What is Kubernetes? A conceptual introduction
-
 2. Getting a Handle on Kubernetes: setting up our tools
-
    1. Set up your Google cloud
    2. Set up kubectl
-
 3. Cloud Operations with Kubernetes
-
    1. Create a cluster in the cloud
-
    2. Deploy a sample app
-
    3. Route traffic to the application
-
-      
-
-
-
-## What is Kubernetes? A conceptual introduction
+   4. Test your system
+   5. Clean up by destroying your cluster
 
 
 
-### Key concepts:
+## The Kubernetes philosophy: A conceptual introduction
 
-- declarative configuration
 
-- self-healing
 
-- scaling with pods
+Kubernetes is a tool for orchestrating distributed computing application. In recent years it has been widely adopted due to its ease of use and its power as a force multiplier in operations, allowing a small number of engineers to deploy, reliably maintain, and seamlessly upgrade distributed computing systems.
 
-  
+In large part the power of Kubernetes to ease operations work lies in the philosophy of *declarative configuration* which it embodies. Essentially this means that you command Kubernetes to bring about a particular state of your computing system by describing or “declaring” the desired end state, rather than by issuing a sequence of commands to perform specific operations (what is known as *imperative configuration*, by contrast). Consider an analogy with helping your friend navigate to a cafe to meet you for lunch. An *imperative* way to “configure” their location to the coordinates of the cafe would be to issue a set of concrete commands to your friend, like “walk to the corner of Blah Street and turn left”, “continue down Whatever Avenue for 2 miles”, or “take the next right after the little red school house”. A *declarative* approach would allow you to simply *declare* the address or GPS coordinates of the cafe, and have them use an automated system capable of continuously nudging their position toward the destination from wherever they currently are.
 
-Kubernetes is a tool for orchestrating distributed computing application. In recent years it has been widely adopted due to its ease of use and its power as a force multiplier in operations, allowing a small number of engineers to deploy, reliably maintain, and upgrade distributed computing systems. Of particular note are a) the ease and precision it brings to horizontal scaling—increasing the number of instances of components of a distributed system, and b) the inherent self-healing nature of systems deployed with Kubernetes, particularly in cloud-based computing environments.
+The declarative approach has obvious advantages over the imperative approach. Firstly, the imperative approach is more *fragile* in that it depends on knowing the person's precise location at the start. If they are not where you think they are when you start issuing commands, they will be rather confused. A static sequence of instructions (like a printed out sheet of navigational instructions) contains no provisions for any unexpected surprises that might cause your friend to have to alter their route—unless they are a capable navigator already familiar with the area, they will be lost if everything doesn't go according to plan. Even a missing street sign could cause them to end up on the other side of town.
 
-In large part the power of Kubernetes to ease operations work lies in the philosophy of *declarative configuration* which it embodies. Essentially this means that you command Kubernetes to bring about a particular state of your computing system by describing or “declaring” the desired end state, rather than by issuing a sequence of commands to perform specific operations—what is known as *imperative configuration*, by contrast. Consider an analogy with helping your friend navigate to a cafe to meet you for lunch. An *imperative* way to “configure” their location to the coordinates of the cafe would be issue a set of steps, like “walk to the corner of Blah street and turn left”, “continue down Whatever Avenue for 2 miles”, or “take the next right after the little red school house”. A *declarative* approach would allow you to simply *declare* the address or GPS coordinates of the cafe, and have them use an automated system capable of continuously updating their position, from wherever they currently are, until they arrive at the destination.
-
-The declarative approach has obvious advantages: the imperative is extremely fragile by comparison--it  depends on knowing the person's precise location at the start, and it includes no provisions for any unexpected surprises that might cause your friend to have to alter their route—unless they are a capable navigator already familiar with the area, they will be completely lost if everything doesn't go according to plan. Even a missing street sign could cause them to end up on the other side of town.
-
-As obvious as the advantages of the declarative approach is the fact that it requires sophisticated technology—in this case a gps navigation system. But, given that one does have access to such a system, the advantages are great indeed. Kubernetes offers comparable advantages in the domain of distributed computing systems operations. Rather than having to follow a series of specific procedural steps such as “download the binary from <https://whatever.url”>, “copy the file into /some/specific/directory”, etc., one simply provides Kubernetes with a manifest, a human-readable description of the desired end state of the system, and allows the powerful technology it encapsulates to guide the system to the correct state.    Similar to an automated gps navigator, Kubernetes can bring your system to a desired state from any starting position, and can correct course along the way if things go wrong.
+The declarative approach clearly requires sophisticated technology—in this case a GPS navigation system. But, given that one does have access to such a system, the advantages are great indeed. Kubernetes offers comparable advantages in the domain of distributed computing systems operations. Rather than having to follow a series of specific procedural steps such as “download the binary from <https://whatever.url”>, “copy the file into /some/specific/directory”, etc., one simply provides Kubernetes with a manifest, a human-readable description of the desired end state of the system, and allows the powerful technology it encapsulates to guide the system to the correct state. Similar to an automated gps navigator, Kubernetes can bring your system to a desired state from a wide range of starting positions, and can correct course along the way if things go wrong.
 
 Other important advantages lack clear analogues in the navigation case. Kubernetes can “self-heal”, if some of the containerized components fail. If your manifest says there should be 147 widgets running, and someone in a data center accidentally unplugs the machine running 20 of the widgets, Kubernetes will quickly detect this disparity and bring the system back to the state described in the manifest by allocating 20 widgets to other available machines.
-
-Kubernetes also makes scaling more easily efficient by introducing the notion of *pods,* which are collections of containers that must be collocated in a single computing environment, for example if they need to share a file system or the ability to use inter-process messaging.
 
 
 
@@ -91,16 +73,14 @@ In this section we will prepare the infrastructure and tools to use Kubernetes. 
 
 Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, the easiest way to manage kubectl is using homebrew.
 
-1. Run `brew update` to make sure your local homebrew is up to date and knows about the latest version of kubectl.
-2. Run `kubectl` to see if you have kubectl installed. 
+1. In iterm or your terminal of choice, run `brew update` to make sure your local homebrew is up to date and knows about the latest version of kubectl.
+2. Run `kubectl` to check whether kubectl is installed. 
    - If it is installed, you should see a summary of the manual page, including a list of top level commands. In this case, run `brew upgrade kubectl` to have homebrew bring your kubectl up to date.
    - If kubectl is not installed, your shell will tell you that the kubectl command cannot be found. In this case, run `brew install kubectl`. Now running the `kubectl` command should give you a summary of the manual page.
 
 
 
-
-
-## Cloud Operations with Kubernetes
+## Cloud operations with Kubernetes
 
 ### Part 1: Create a cluster in the cloud
 
@@ -174,11 +154,11 @@ The manifest includes metadata and labels that the kubectle CLI uses to find the
 
 The `containers` section at the bottom defines a single container that will run our app. We give it a name and tell Kubernetes where to find the container image--in this case we will borrow it from the sample apps provided by Google on its public registry, gcr.io. We also tell it on which port to listen on requests, in this case port 80.
 
-Create the deployment by telling Kubernetes to apply the manifest at the given file path. You can either a) copy the manifest above into a file on your local file system, and use the path to the manifest on your local file system, or b) use the following path where it is hosted by k8s.io as an example: https://k8s.io/examples/service/access/hello.yaml
+Create the deployment by telling Kubernetes to apply the manifest at the given file path, with the command: `kubectl apply -f PATH_TO_MANIFEST`. To fill in "PATH_TO_MANIFEST" with the correct path, you can either a) copy the manifest above into a file on your local file system, and use the path to that file on your local file system, or b) use the following path where it is hosted by k8s.io as an example: https://k8s.io/examples/service/access/hello.yaml.
 
-`kubectl apply -f PATH_TO_MANIFEST`
+You should see confirmation that the deployment has been created:
 
-You should see confirmation that the deployment has been created `deployment.apps/hello created`
+​	 `deployment.apps/hello created`
 
 If you ask Kubernetes to list your deployments, you should see it listed:
 
@@ -194,9 +174,15 @@ You can get detailed information about the deployment asking Kubernetes to descr
 
  `kubectl describe deployments hello`
 
+
+
 The manifest we used to create the deployment asks for seven replicas of the pod containing our application. This is more than we need for this simple example, so let's scale it back by editing the manifest.
 
 Run `kubectl edit deployments hello` to edit the manifest in your default text editor. Under the `spec` key, edit the value of the `replicas` key to be 3, rather than seven. Save and close the file, and Kubernetes will apply your changes.
+
+Alternately, if you have copied the manifest to a local file, you can edit the value of the `replicas` key in this local file, and tell Kubernetes to redeploy by using same command again: `kubectl apply -f PATH_TO_MANIFEST`. 
+
+
 
 If you run  `kubectl describe deployments hello` again, you should see that there are now only 3 replicas. 
 
@@ -222,7 +208,7 @@ Events:
 
 
 
-Currently, the application is not exposed to the internet. Do this, we will have Kuberneteds create a load balancer with a public IP address to which we can make requests via a web browser or the `curl` command. However, first, we need to define a Kubernetes 'service' object to make our app backend routable to the load balancer. We will do this by applying the following manifest:d
+Currently, the application is not exposed to the internet. Do this, we will have Kuberneteds create a load balancer with a public IP address to which we can make requests via a web browser or the `curl` command. However, first, we need to define a Kubernetes 'service' object to make our app backend routable to the load balancer. We will do this by applying the following manifest:
 
 ```yaml
 kind: Service
@@ -243,5 +229,90 @@ Note that the manifest uses the 'app: hello' and 'tier: backend' selectors that 
 
 As before we will command Kubernetes to make the desired changes using `kubernetes apply -f PATH_TO_MANIFEST`. Either a) copy the manifest above into a file on your local file system, and use the path to the manifest on your local file system, or b) use the following path where it is hosted by k8s.io as an example: https://k8s.io/examples/service/access/hello-service.yaml.
 
+Terminal output should confirm that the service has been created.
 
 
+
+Finally, we will deploy a simple nginx load balancer and create a corresponding service. We will do this by appying the following manifest:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: hello
+    tier: frontend
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: hello
+      tier: frontend
+      track: stable
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello
+        tier: frontend
+        track: stable
+    spec:
+      containers:
+      - name: nginx
+        image: "gcr.io/google-samples/hello-frontend:1.0"
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/usr/sbin/nginx","-s","quit"]
+```
+
+
+
+Once more, command Kubernetes to make the desired changes using `kubernetes apply -f PATH_TO_MANIFEST`. Either a) copy the manifest above into a file on your local file system, and use the path to the manifest on your local file system, or b) use the following path where it is hosted by k8s.io as an example: https://k8s.io/examples/service/access/frontend.yaml.
+
+Terminal output should confirm that both the deployment and the service have been created.
+
+
+
+### Part 4: Test your system
+
+To test the system you have created, make a request through the internet to the public internet IP address of the load balancer. The load balancer will then route the request to the app container in one of the replicas of your 'hello' pods.
+
+To find this public IP address, run `kubectl get services`, to display basic information about your running services.
+
+You should see both your 'frontend' and 'hello' services listed, as will as a service called 'kubernetes', which is created automatically and used to send commands to Kubernetes from inside the cluster.
+
+Optionally, if you want to watch Kubernetes self-heal in a rather minor way, run `kubectl delete service kubernetes`. This will indeed delete the `kubernetes` service, as you can confirm by running `kubectl get services` immediately (it will be gone). However, in a matter of seconds, Kubernetes will recreate this service object.
+
+Only the 'frontend' service will have an "external-ip" that can be reached through the internet. When you first check, it may be listed as "pending". Simply take a break to stretch or dance around for a minute or so to get your blood pumping for the excitement to come, and check again.
+
+Once `kubectl get services`, or the more specific command `kubectl get service frontend`, displays an external IP for the frontend service, we are ready to make a request to our application. In the terminal, type: `curl http://YOUR_EXTERNAL_IP`, using the displayed external IP. You should see a simple message in return:
+
+```
+{"message":"Hello"}
+```
+
+
+
+You can also confirm that the app is running by navigating to `http://YOUR_EXTERNAL_IP` in your web browser of choice. Your browser should display the same simple 'hello' message.
+
+
+
+### Part 5: Clean up by destroying your cluster
+
+When you are ready to clean everything up, tell Google cloud to delete your cluster. If you don't remember the name of your cluster, ask Google cloud by running `gcloud container clusters list`.
+
+When you are ready, run `gcloud container clusters delete YOUR_CLUSTER_NAME`. This will destroy the deployments and services and associated Kubernetes objects.
+
+To confirm that everything has been deleted, you can return to the Google cloud console at https://console.cloud.google.com/. The console may several minutes (perhaps up to half an hour) to update, but eventually it will show that you have no active resources listed under the 'resources' tab. 
