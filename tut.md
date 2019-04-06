@@ -21,7 +21,7 @@ This tutorial offers a conceptual overview of Kubernetes, and then guides the us
 ### Outline:
 
 1. The Kubernetes philosophy: a conceptual introduction
-2. Getting a Handle on Kubernetes: setting up our tools
+2. Getting a handle on Kubernetes: setting up our tools
    1. Set up your Google cloud
    2. Set up kubectl
 3. Cloud Operations with Kubernetes
@@ -94,7 +94,7 @@ Kubectl is the command line interface (CLI) for Kubernetes. On a mac computer, t
 
 	The output should confirm that your cluster is up and running (the output below is for creation of a 		cluster called 'noobcluster' in a Google cloud project called 'kubes4noobs'). This can take a few minutes.
 
-```
+```bash
 Creating cluster noobcluster in us-west1-a... Cluster is being health-checked (master is
 
  healthy)...done.
