@@ -7,8 +7,8 @@ This tutorial offers a conceptual introduction to Kubernetes, and then guides th
 ### Learning Objectives:
 
 - Understand the advantages of using Kubernetes to manage distributed computing systems.
-- Set up the tools for using kubernetes, on your machine and in Google cloud.
-- Create your first kubernetes cluster.
+- Set up the tools for using Kubernetes, on your machine and in Google cloud.
+- Create your first Kubernetes cluster.
 - Deploy a sample app and load balancer.
 - Route traffic through the load balancer to the application using a Kubernetes service.
 
